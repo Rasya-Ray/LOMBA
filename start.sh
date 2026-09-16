@@ -1,20 +1,26 @@
 #!/bin/bash
 
-echo "[STARTUP] FamilyGuard Python AI Server"
+set -e
 
-# Create venv if not exist
-if [ ! -d "venv" ]; then
-    echo "[SETUP] Creating virtual environment..."
-    python3 -m venv venv
+cd "$(dirname "$0")"
+
+echo "Starting FamilyGuard AI..."
+
+if [ ! -d ".venv" ]; then
+    echo "Creating virtual environment..."
+    python3 -m venv .venv
 fi
 
-# Activate venv
-source venv/bin/activate
+source .venv/bin/activate
 
-# Install requirements
-echo "[SETUP] Installing dependencies..."
-pip install -q -r requirements.txt
+echo "Installing dependencies..."
 
-# Run
-echo "[RUN] Starting server..."
-python3 main.py
+python -m pip install --upgrade pip
+
+python -m pip install -r requirements.txt
+
+echo "Starting FastAPI..."
+
+python -m uvicorn main:app \
+    --host 0.0.0.0 \
+    --port 8000
